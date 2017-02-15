@@ -2,12 +2,13 @@
 
 function usage
 {
-    echo "Submit many freesurfer jobs to the cluster."
-    echo "The input subject directory must contain group subdirectories, which"
-    echo "in turn will contain the T1-anatomical NIfTI images for each associated"
-    echo "group. If you only have one group, you still need a subdirectory for"
-    echo "your images. By default, the program will print test output so you can"
-    echo "verify everything is interpreted correctly."
+    echo ""
+    echo "  Submit many freesurfer jobs to the cluster."
+    echo "  The input subject directory must contain group subdirectories, which"
+    echo "  in turn will contain the T1-anatomical NIfTI images for each associated"
+    echo "  group. If you only have one group, you still need a subdirectory for"
+    echo "  your images. By default, the program will print test output so you can"
+    echo "  verify everything is interpreted correctly."
     echo ""
     echo "Use -r to submit the jobs."
     echo ""
@@ -19,7 +20,6 @@ function usage
     echo "   -p <project directory path>      This must be an absolute path, starting from root. Example: /home/tmhabc/scratch/freesurfer_exp"
     echo "   -s <subjects directory name>     This is the name of my subjects directory,         Example: vascular_dementia"
     echo ""
-    
 }
 
 popt=0
