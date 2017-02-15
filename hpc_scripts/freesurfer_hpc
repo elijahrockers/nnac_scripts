@@ -17,7 +17,7 @@ function usage
     echo "OPTIONS:"
     echo "   -r        Submit the jobs.
     echo "   -p <project directory path>      This must be an absolute path, starting from root. Example: /home/tmhabc/scratch/freesurfer_exp"
-    echo "   -s <subjects directory name>     This is the name of my subjects directory,         Example: vascular_dementia
+    echo "   -s <subjects directory name>     This is the name of my subjects directory,         Example: vascular_dementia"
     echo ""
     
 }
