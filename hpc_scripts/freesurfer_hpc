@@ -71,8 +71,10 @@ for i in `ls ${project}/${subjects}`; do
                 recon-all -all -qcache -subjid $(echo $j | sed s/.nii//) -i ${project}/${subjects}/${i}/${j} -sd ${project}/output/${i}
 EOF
 
-                # UN-COMMENT THE qsub LINE TO ACTUALLY SUBMIT THE JOBS
-                cat ${script}
-                #qsub $script
+                if [ RUN == "true" ]; then
+                        qsub $script
+                else
+                        cat $script
+                fi
         done
 done
