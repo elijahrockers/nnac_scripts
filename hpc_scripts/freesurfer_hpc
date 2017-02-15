@@ -20,15 +20,17 @@ function usage
     echo "   -p <project directory path>      This must be an absolute path, starting from root. Example: /home/tmhabc/scratch/freesurfer_exp"
     echo "   -s <subjects directory name>     This is the name of my subjects directory,         Example: vascular_dementia"
     echo ""
+    
 }
 
 popt=0
 sopt=0
+RUN=0
 while getopts "rp:s: h" o ; do
         case $o in
-                r ) RUN="true";;
+                r ) RUN=1;;
                 p ) project=$OPTARG; popt=1;;
-                s ) subject=$OPTARG; sopt=1;;
+                s ) subjects=$OPTARG; sopt=1;;
                 h ) usage; exit 0;;        
                 \? ) echo "Unknown option: -$OPTARG" >&2; exit 1;;
                 :  ) echo "Missing option argument for -$OPTARG" >&2; exit 1;;
@@ -36,11 +38,11 @@ while getopts "rp:s: h" o ; do
         esac
 done
 
-if [ popt -eq 0 -o sopt -eq 0 ]; then
+if [ $popt -eq 0 -o $sopt -eq 0 ]; then
         echo "    -p and -s are required arguments."
         exit 1
 fi
-if [ -d ${project}/output ];
+if [ -d ${project}/output ]; then
         echo "    'output' directory already exists."
         exit 1
 fi
@@ -71,7 +73,7 @@ for i in `ls ${project}/${subjects}`; do
                 recon-all -all -qcache -subjid $(echo $j | sed s/.nii//) -i ${project}/${subjects}/${i}/${j} -sd ${project}/output/${i}
 EOF
 
-                if [ RUN == "true" ]; then
+                if [ $RUN -eq 1 ]; then
                         qsub $script
                 else
                         cat $script
