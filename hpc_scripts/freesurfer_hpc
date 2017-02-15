@@ -7,7 +7,7 @@ function usage
     echo "in turn will contain the T1-anatomical NIfTI images for each associated"
     echo "group. If you only have one group, you still need a subdirectory for"
     echo "your images. By default, the program will print test output so you can"
-    echo "verify everything is interpreted correctly. 
+    echo "verify everything is interpreted correctly."
     echo ""
     echo "Use -r to submit the jobs."
     echo ""
