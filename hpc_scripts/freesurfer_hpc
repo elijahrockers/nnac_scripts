@@ -1,0 +1,78 @@
+#!/bin/bash
+
+function usage
+{
+    echo "Submit many freesurfer jobs to the cluster."
+    echo "The input subject directory must contain group subdirectories, which"
+    echo "in turn will contain the T1-anatomical NIfTI images for each associated"
+    echo "group. If you only have one group, you still need a subdirectory for"
+    echo "your images. By default, the program will print test output so you can"
+    echo "verify everything is interpreted correctly. 
+    echo ""
+    echo "Use -r to submit the jobs."
+    echo ""
+    echo "Usage: "
+    echo "   freesurfer_hpc <options> -p <absolute path to project directory> -s <name of subjects directory>"
+    echo ""
+    echo "OPTIONS:"
+    echo "   -r        Submit the jobs.
+    echo "   -p <project directory path>      This must be an absolute path, starting from root. Example: /home/tmhabc/scratch/freesurfer_exp"
+    echo "   -s <subjects directory name>     This is the name of my subjects directory,         Example: vascular_dementia
+    echo ""
+    
+}
+
+popt=0
+sopt=0
+while getopts "rp:s: h" o ; do
+        case $o in
+                r ) RUN="true";;
+                p ) project=$OPTARG; popt=1;;
+                s ) subject=$OPTARG; sopt=1;;
+                h ) usage; exit 0;;        
+                \? ) echo "Unknown option: -$OPTARG" >&2; exit 1;;
+                :  ) echo "Missing option argument for -$OPTARG" >&2; exit 1;;
+                *  ) echo "Unimplemented option: -$OPTARG" >&2; exit 1;;
+        esac
+done
+
+if [ popt -eq 0 -o sopt -eq 0 ]; then
+        echo "    -p and -s are required arguments."
+        exit 1
+fi
+if [ -d ${project}/output ];
+        echo "    'output' directory already exists."
+        exit 1
+fi
+
+# INITIALIZE OUTPUT DIRECTORIES
+mkdir ${project}/output
+for i in `ls ${project}/${subjects}`; do
+        mkdir ${project}/output/${i}
+        ln -s /share/apps/freesurfer/5.3.0/subjects/* ${project}/output/${i}
+done
+
+# JOB SUBMIT
+for i in `ls ${project}/${subjects}`; do
+        for j in `ls ${project}/${subjects}/${i}`; do
+                echo "   *** SUBJECT: ${j} ***"
+                script=$(mktemp)
+                cat > ${script} <<EOF
+                #!/bin/sh
+                #PBS -q default
+                #PBS -N $j
+                #PBS -l nodes=1:ppn=1
+                #PBS -l walltime=01:00:00:00
+                #PBS -e localhost:${project}/runlogs
+                #PBS -o localhost:${project}/runlogs
+                #PBS -S /bin/bash
+                module load freesurfer/5.3.0
+                source /share/apps/freesurfer/5.3.0/SetUpFreeSurfer.sh
+                recon-all -all -qcache -subjid $(echo $j | sed s/.nii//) -i ${project}/${subjects}/${i}/${j} -sd ${project}/output/${i}
+EOF
+
+                # UN-COMMENT THE qsub LINE TO ACTUALLY SUBMIT THE JOBS
+                cat ${script}
+                #qsub $script
+        done
+done
