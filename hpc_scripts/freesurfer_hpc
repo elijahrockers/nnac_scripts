@@ -18,7 +18,7 @@ function usage
     echo "OPTIONS:"
     echo "   -r        Submit the jobs."
     echo "   -p <project directory path>      This must be an absolute path, starting from root. Example: /home/tmhabc/scratch/freesurfer_exp"
-    echo "   -s <subjects directory name>     This is the name of my subjects directory,         Example: vascular_dementia"
+    echo "   -d <data directory name>         This is the name of your data directory,         Example: vascular_dementia"
     echo ""
     
 }
@@ -26,11 +26,11 @@ function usage
 popt=0
 sopt=0
 RUN=0
-while getopts "rp:s: h" o ; do
+while getopts "rp:d: h" o ; do
         case $o in
                 r ) RUN=1;;
                 p ) project=$OPTARG; popt=1;;
-                s ) subjects=$OPTARG; sopt=1;;
+                d ) subjects=$OPTARG; sopt=1;;
                 h ) usage; exit 0;;        
                 \? ) echo "Unknown option: -$OPTARG" >&2; exit 1;;
                 :  ) echo "Missing option argument for -$OPTARG" >&2; exit 1;;
