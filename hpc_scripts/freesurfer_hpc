@@ -13,13 +13,13 @@ function usage
     echo "Use -r to submit the jobs."
     echo ""
     echo "Usage: "
-    echo "   freesurfer_hpc <options> -p <absolute path to project directory> -s <name of subjects directory>"
+    echo "   freesurfer_hpc <options> -p <absolute path to project directory> -s <name of subjects directory> -o <name of output directory>"
     echo ""
     echo "OPTIONS:"
     echo "   -r        Submit the jobs."
     echo "   -p <project directory path>      This must be an absolute path, starting from root. Example: /home/tmhabc/scratch/freesurfer_exp"
     echo "   -d <data directory name>         This is the name of your data directory,           Example: vascular_dementia"
-    echo "   -d <data directory name>         This is the name of your output directory,         Example: results"
+    echo "   -o <output directory name>       This is the name of your output directory,         Example: results"
     echo ""
     
 }
