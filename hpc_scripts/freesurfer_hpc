@@ -18,19 +18,22 @@ function usage
     echo "OPTIONS:"
     echo "   -r        Submit the jobs."
     echo "   -p <project directory path>      This must be an absolute path, starting from root. Example: /home/tmhabc/scratch/freesurfer_exp"
-    echo "   -d <data directory name>         This is the name of your data directory,         Example: vascular_dementia"
+    echo "   -d <data directory name>         This is the name of your data directory,           Example: vascular_dementia"
+    echo "   -d <data directory name>         This is the name of your output directory,         Example: results"
     echo ""
     
 }
 
 popt=0
 sopt=0
+oopt=0
 RUN=0
-while getopts "rp:d: h" o ; do
+while getopts "rp:d:o: h" o ; do
         case $o in
                 r ) RUN=1;;
                 p ) project=$OPTARG; popt=1;;
                 d ) subjects=$OPTARG; sopt=1;;
+                o ) output=$OPTARG; oopt=1;;
                 h ) usage; exit 0;;        
                 \? ) echo "Unknown option: -$OPTARG" >&2; exit 1;;
                 :  ) echo "Missing option argument for -$OPTARG" >&2; exit 1;;
@@ -38,21 +41,23 @@ while getopts "rp:d: h" o ; do
         esac
 done
 
-if [ $popt -eq 0 -o $sopt -eq 0 ]; then
-        echo "    -p and -s are required arguments."
-        exit 1
-fi
-if [ -d ${project}/output ]; then
-        echo "    'output' directory already exists."
+if [ $popt -eq 0 -o $sopt -eq 0 -o $oopt -eq 0 ]; then
+        echo "    -p, -d, and -o are required arguments."
         exit 1
 fi
 
 # INITIALIZE OUTPUT DIRECTORIES
-mkdir ${project}/output
-for i in `ls ${project}/${subjects}`; do
-        mkdir ${project}/output/${i}
-        ln -s /share/apps/freesurfer/5.3.0/subjects/* ${project}/output/${i}
-done
+if [ $RUN -eq 1 ]; then
+    if [ -d ${project}/${output} ]; then
+        echo "    'output' directory already exists."
+        exit 1
+    fi
+    mkdir ${project}/${output}
+    for i in `ls ${project}/${subjects}`; do
+        mkdir ${project}/${output}/${i}
+        ln -s /share/apps/freesurfer/5.3.0/subjects/* ${project}/${output}/${i}
+    done
+fi
 
 # JOB SUBMIT
 for i in `ls ${project}/${subjects}`; do
@@ -70,7 +75,7 @@ for i in `ls ${project}/${subjects}`; do
                 #PBS -S /bin/bash
                 module load freesurfer/5.3.0
                 source /share/apps/freesurfer/5.3.0/SetUpFreeSurfer.sh
-                recon-all -all -qcache -subjid $(echo $j | sed s/.nii//) -i ${project}/${subjects}/${i}/${j} -sd ${project}/output/${i}
+                recon-all -all -qcache -subjid $(echo $j | sed s/.nii//) -i ${project}/${subjects}/${i}/${j} -sd ${project}/${output}/${i}
 EOF
 
                 if [ $RUN -eq 1 ]; then
